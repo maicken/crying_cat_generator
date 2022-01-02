@@ -29,4 +29,6 @@ You can also select only one image by using -i followed by the path to the image
 
 A simple demo was created using colab. You don't need to install in your local machine, you just need to open the file "crying_cat_generator.ipynb" in the google colab and follow colab instructions.
 
+## Credits
 
+This project was made possible thanks to [kairess](https://github.com/kairess/cat_hipsterizer), who developped a model for cat and landmark detection.  
