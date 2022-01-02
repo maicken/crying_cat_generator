@@ -2,7 +2,7 @@
 
 Welcome to Crying Cat Generator.
 
-
+![Alt Text](https://raw.githubusercontent.com/maicken/crying_cat_generator/main/crying_cat.gif)
 
 ## 1. Setup
 
