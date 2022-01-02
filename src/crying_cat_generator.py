@@ -8,7 +8,7 @@ import glob
 
 
 img_size = 224
-crying_cat = cv2.imread('crying_cat_images/crying_cat_3.png', cv2.IMREAD_UNCHANGED)
+crying_cat = cv2.imread('src/crying_cat_images/crying_cat_3.png', cv2.IMREAD_UNCHANGED)
 
 left_eye = (270, 280)
 right_eye = (675, 270)
@@ -17,8 +17,8 @@ center_cat = (498, 422)
 adjust_angle = 0
 
 # models
-bbs_model_name = 'cat_hipsterizer/models/bbs_1.h5'
-lmks_model_name = 'cat_hipsterizer/models/lmks_1.h5'
+bbs_model_name = 'src/cat_hipsterizer/models/bbs_1.h5'
+lmks_model_name = 'src/cat_hipsterizer/models/lmks_1.h5'
 bbs_model = load_model(bbs_model_name)
 lmks_model = load_model(lmks_model_name)
 
@@ -51,35 +51,41 @@ def overlay_transparent(background_img, img_to_overlay_t, mask, x, y, overlay_si
     h, w, _ = img_to_overlay_t.shape
     
     lim_left_x, lim_right_x, lim_up_y, lim_down_y = 0, bg_img.shape[1], 0, bg_img.shape[0]
+    left_x, right_x, up_y, down_y = int(x - w/2), int(x + w/2), int(y - h/2), int(y + h/2)
 
-    if int(y - h/2) < lim_up_y:
-        margin =  lim_down_y - int(y - h/2)
+    if up_y < lim_up_y:
+        margin =  lim_up_y - up_y
+        up_y = lim_up_y
         img_to_overlay_t = img_to_overlay_t[margin:, :]
         mask = mask[margin:, :]
 
-    if int(y + h/2) > lim_down_y:
-        margin = int(y + h/2) - lim_down_y
+    if down_y > lim_down_y:
+        margin = down_y - lim_down_y
+        down_y = lim_down_y
         img_to_overlay_t = img_to_overlay_t[:-margin, :]
         mask = mask[:-margin, :]
 
-    if int(x - w/2) < lim_left_x:
-        margin =  lim_left_x - int(x - w/2)
+    if left_x < lim_left_x:
+        margin =  lim_left_x - left_x
+        left_x = lim_left_x
         img_to_overlay_t = img_to_overlay_t[:, margin:]
         mask = mask[:, margin:]
 
-    if int(x + w/2) > lim_right_x:
-        margin = int(x + w/2) - lim_right_x
+    if right_x > lim_right_x:
+        margin = right_x - lim_right_x
+        right_x = lim_right_x
         img_to_overlay_t = img_to_overlay_t[:, :-margin]
         mask = mask[:, :-margin]
-
+    
     mask = cv2.medianBlur(mask, 5)
     mask1 = np.repeat(mask[:, :, np.newaxis], 4, axis=2) / 255
     mask2 = 1 - mask1
 
-    roi = bg_img[int(y-h/2):int(y+h/2), int(x-w/2):int(x+w/2)]
+    roi = bg_img[up_y:down_y, left_x:right_x]
+
     final = np.uint8(roi * mask2 + img_to_overlay_t * mask1)
 
-    bg_img[int(y-h/2):int(y+h/2), int(x-w/2):int(x+w/2)] = final
+    bg_img[up_y:down_y, left_x:right_x] = final
 
     # convert 4 channels to 4 channels
     bg_img = cv2.cvtColor(bg_img, cv2.COLOR_BGRA2BGR)
@@ -155,7 +161,7 @@ def generate_crying_cat(f, output_path):
     rotated_crying_cat = cv2.warpAffine(crying_cat, M, (crying_cat.shape[1], crying_cat.shape[0]))
 
     # mask
-    mask = cv2.imread('crying_cat_images/mask.png', cv2.IMREAD_UNCHANGED)
+    mask = cv2.imread('src/crying_cat_images/mask.png', cv2.IMREAD_UNCHANGED)
     mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
 
     rotated_mask = cv2.warpAffine(mask, M, (mask.shape[1], mask.shape[0]))
@@ -168,7 +174,8 @@ def generate_crying_cat(f, output_path):
     except Exception as e:
         print('failed overlay image')
 
-    filename, ext = os.path.splitext(f)
+    os.makedirs(output_path, exist_ok=True)
+    filename, ext = os.path.splitext(os.path.basename(f))
     output_path = os.path.join(output_path, '%s_result%s' % (filename, ext))
     cv2.imwrite(output_path, result_img)
 
