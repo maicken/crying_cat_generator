@@ -10,8 +10,8 @@ import glob
 img_size = 224
 crying_cat = cv2.imread('src/crying_cat_images/crying_cat_3.png', cv2.IMREAD_UNCHANGED)
 
-left_eye = (270, 280)
-right_eye = (675, 270)
+left_eye = (250, 280)
+right_eye = (685, 270)
 size_between_eyes = np.linalg.norm(np.array(left_eye) - np.array(right_eye))
 center_cat = (498, 422)
 adjust_angle = 0
@@ -78,8 +78,8 @@ def overlay_transparent(background_img, img_to_overlay_t, mask, x, y, overlay_si
         mask = mask[:, :-margin]
     
     mask = cv2.medianBlur(mask, 5)
-    mask1 = np.repeat(mask[:, :, np.newaxis], 4, axis=2) / 255
-    mask2 = 1 - mask1
+    mask2 = np.repeat(mask[:, :, np.newaxis], 4, axis=2) / 255
+    mask1 = 1 - mask2
 
     roi = bg_img[up_y:down_y, left_x:right_x]
 
