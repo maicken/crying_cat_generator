@@ -78,8 +78,8 @@ def overlay_transparent(background_img, img_to_overlay_t, mask, x, y, overlay_si
         mask = mask[:, :-margin]
     
     mask = cv2.medianBlur(mask, 5)
-    mask2 = np.repeat(mask[:, :, np.newaxis], 4, axis=2) / 255
-    mask1 = 1 - mask2
+    mask1 = np.repeat(mask[:, :, np.newaxis], 4, axis=2) / 255
+    mask2 = 1 - mask1
 
     roi = bg_img[up_y:down_y, left_x:right_x]
 
