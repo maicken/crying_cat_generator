@@ -161,7 +161,7 @@ def generate_crying_cat(f, output_path):
     rotated_crying_cat = cv2.warpAffine(crying_cat, M, (crying_cat.shape[1], crying_cat.shape[0]))
 
     # mask
-    mask = cv2.imread('src/crying_cat_images/mask_2.png', cv2.IMREAD_UNCHANGED)
+    mask = cv2.imread('src/crying_cat_images/mask.png', cv2.IMREAD_UNCHANGED)
     mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
 
     rotated_mask = cv2.warpAffine(mask, M, (mask.shape[1], mask.shape[0]))
